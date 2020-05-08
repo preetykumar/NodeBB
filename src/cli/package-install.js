@@ -35,45 +35,45 @@ exports.supportedPackageManager = [
 ];
 
 function installAll() {
-	const prod = global.env !== 'development';
-	let command = 'npm install';
-	try {
-		fs.accessSync(path.join(modulesPath, 'nconf/package.json'), fs.constants.R_OK);
-		const supportedPackageManagerList = exports.supportedPackageManager; // load config from src/cli/package-install.js
-		const packageManager = require('nconf').get('package_manager');
-		if (supportedPackageManagerList.indexOf(packageManager) >= 0) {
-			switch (packageManager) {
-			case 'yarn':
-				command = 'yarn';
-				break;
-			case 'pnpm':
-				command = 'pnpm install';
-				break;
-			case 'cnpm':
-				command = 'cnpm install';
-				break;
-			default:
-				break;
-			}
-		}
-	} catch (e) {
+//	const prod = global.env !== 'development';
+//	let command = 'npm install';
+//	try {
+//		fs.accessSync(path.join(modulesPath, 'nconf/package.json'), fs.constants.R_OK);
+//		const supportedPackageManagerList = exports.supportedPackageManager; // load config from src/cli/package-install.js
+//		const packageManager = require('nconf').get('package_manager');
+//		if (supportedPackageManagerList.indexOf(packageManager) >= 0) {
+//			switch (packageManager) {
+//			case 'yarn':
+//				command = 'yarn';
+//				break;
+//			case 'pnpm':
+//				command = 'pnpm install';
+//				break;
+//			case 'cnpm':
+//				command = 'cnpm install';
+//				break;
+//			default:
+//				break;
+//			}
+//		}
+//	} catch (e) {
 		// ignore
-	}
-	try {
-		cproc.execSync(command + (prod ? ' --production' : ''), {
-			cwd: path.join(__dirname, '../../'),
-			stdio: [0, 1, 2],
-		});
-	} catch (e) {
-		console.log('Error installing dependencies!');
-		console.log('message: ' + e.message);
-		console.log('stdout: ' + e.stdout);
-		console.log('stderr: ' + e.stderr);
-		throw e;
-	}
+//	}
+//	try {
+//		cproc.execSync(command + (prod ? ' --production' : ''), {
+//			cwd: path.join(__dirname, '../../'),
+//			stdio: [0, 1, 2],
+//		});
+//	} catch (e) {
+//		console.log('Error installing dependencies!');
+//		console.log('message: ' + e.message);
+//		console.log('stdout: ' + e.stdout);
+//		console.log('stderr: ' + e.stderr);
+//		throw e;
+//	}
 }
 
-exports.installAll = installAll;
+//exports.installAll = installAll;
 
 function preserveExtraneousPlugins() {
 	// Skip if `node_modules/` is not found or inaccessible
