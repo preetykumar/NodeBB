@@ -1,15 +1,15 @@
 'use strict';
 
-const path = require('path');
-const fs = require('fs');
-const cproc = require('child_process');
+var path = require('path');
+var fs = require('fs');
+var cproc = require('child_process');
 
-const packageFilePath = path.join(__dirname, '../../package.json');
-const packageDefaultFilePath = path.join(__dirname, '../../install/package.json');
-const modulesPath = path.join(__dirname, '../../node_modules');
+var packageFilePath = path.join(__dirname, '../../package.json');
+var packageDefaultFilePath = path.join(__dirname, '../../install/package.json');
+var modulesPath = path.join(__dirname, '../../node_modules');
 
 function updatePackageFile() {
-	let oldPackageContents = {};
+	var oldPackageContents = {};
 
 	try {
 		oldPackageContents = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
@@ -19,42 +19,24 @@ function updatePackageFile() {
 		}
 	}
 
-	const defaultPackageContents = JSON.parse(fs.readFileSync(packageDefaultFilePath, 'utf8'));
-	const packageContents = { ...oldPackageContents, ...defaultPackageContents, dependencies: { ...oldPackageContents.dependencies, ...defaultPackageContents.dependencies } };
+	var defaultPackageContents = JSON.parse(fs.readFileSync(packageDefaultFilePath, 'utf8'));
+	var packageContents = Object.assign({}, oldPackageContents, defaultPackageContents, {
+		dependencies: Object.assign({}, oldPackageContents.dependencies, defaultPackageContents.dependencies),
+	});
 
 	fs.writeFileSync(packageFilePath, JSON.stringify(packageContents, null, 2));
 }
 
 exports.updatePackageFile = updatePackageFile;
 
-exports.supportedPackageManager = [
-	'npm',
-	'cnpm',
-	'pnpm',
-	'yarn',
-];
-
-function installAll() {
-//	const prod = global.env !== 'development';
-//	let command = 'npm install';
+//function installAll() {
+//	var prod = global.env !== 'development';
+//	var command = 'npm install';
 //	try {
 //		fs.accessSync(path.join(modulesPath, 'nconf/package.json'), fs.constants.R_OK);
-//		const supportedPackageManagerList = exports.supportedPackageManager; // load config from src/cli/package-install.js
-//		const packageManager = require('nconf').get('package_manager');
-//		if (supportedPackageManagerList.indexOf(packageManager) >= 0) {
-//			switch (packageManager) {
-//			case 'yarn':
-//				command = 'yarn';
-//				break;
-//			case 'pnpm':
-//				command = 'pnpm install';
-//				break;
-//			case 'cnpm':
-//				command = 'cnpm install';
-//				break;
-//			default:
-//				break;
-//			}
+//		var packageManager = require('nconf').get('package_manager');
+//		if (packageManager === 'yarn') {
+//			command = 'yarn';
 //		}
 //	} catch (e) {
 		// ignore
@@ -71,7 +53,7 @@ function installAll() {
 //		console.log('stderr: ' + e.stderr);
 //		throw e;
 //	}
-}
+//}
 
 //exports.installAll = installAll;
 
@@ -83,13 +65,13 @@ function preserveExtraneousPlugins() {
 		return;
 	}
 
-	const isPackage = /^nodebb-(plugin|theme|widget|reward)-\w+/;
-	const packages = fs.readdirSync(modulesPath).filter(function (pkgName) {
+	var isPackage = /^nodebb-(plugin|theme|widget|reward)-\w+/;
+	var packages = fs.readdirSync(modulesPath).filter(function (pkgName) {
 		return isPackage.test(pkgName);
 	});
-	const packageContents = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
+	var packageContents = JSON.parse(fs.readFileSync(packageFilePath, 'utf8'));
 
-	const extraneous = packages
+	var extraneous = packages
 		// only extraneous plugins (ones not in package.json) which are not links
 		.filter(function (pkgName) {
 			const extraneous = !packageContents.dependencies.hasOwnProperty(pkgName);
@@ -99,7 +81,7 @@ function preserveExtraneousPlugins() {
 		})
 		// reduce to a map of package names to package versions
 		.reduce(function (map, pkgName) {
-			const pkgConfig = JSON.parse(fs.readFileSync(path.join(modulesPath, pkgName, 'package.json'), 'utf8'));
+			var pkgConfig = JSON.parse(fs.readFileSync(path.join(modulesPath, pkgName, 'package.json'), 'utf8'));
 			map[pkgName] = pkgConfig.version;
 			return map;
 		}, {});
